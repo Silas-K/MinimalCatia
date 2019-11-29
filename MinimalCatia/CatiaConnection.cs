@@ -13,7 +13,6 @@ namespace MinimalCatia
         MECMOD.PartDocument hsp_catiaPart;
         MECMOD.Sketch hsp_catiaProfil;
 
-
         public bool CATIALaeuft()
         {
             try
