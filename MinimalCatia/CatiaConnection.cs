@@ -36,7 +36,7 @@ namespace MinimalCatia
             return true;
         }
 
-        public void ErstelleSkizze()
+        public void ErstelleLeereSkizze()
         {
             // geometrisches Set auswaehlen und umbenennen
             HybridBodies catHybridBodies1 = hsp_catiaPart.Part.HybridBodies;
@@ -92,19 +92,19 @@ namespace MinimalCatia
             Point2D catPoint2D4 = catFactory2D1.CreatePoint(-50, -50);
 
             // dann die Linien
-            var catLine2D1 = catFactory2D1.CreateLine(-50, 50, 50, 50);
+            Line2D catLine2D1 = catFactory2D1.CreateLine(-50, 50, 50, 50);
             catLine2D1.StartPoint = catPoint2D1;
             catLine2D1.EndPoint = catPoint2D2;
 
-            var catLine2D2 = catFactory2D1.CreateLine(50, 50, 50, -50);
+            Line2D catLine2D2 = catFactory2D1.CreateLine(50, 50, 50, -50);
             catLine2D2.StartPoint = catPoint2D2;
             catLine2D2.EndPoint = catPoint2D3;
 
-            var catLine2D3 = catFactory2D1.CreateLine(50, -50, -50, -50);
+            Line2D catLine2D3 = catFactory2D1.CreateLine(50, -50, -50, -50);
             catLine2D3.StartPoint = catPoint2D3;
             catLine2D3.EndPoint = catPoint2D4;
 
-            var catLine2D4 = catFactory2D1.CreateLine(-50, -50, -50, 50);
+            Line2D catLine2D4 = catFactory2D1.CreateLine(-50, -50, -50, 50);
             catLine2D4.StartPoint = catPoint2D4;
             catLine2D4.EndPoint = catPoint2D1;
 

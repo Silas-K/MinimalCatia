@@ -26,7 +26,7 @@ namespace MinimalCatia
                     Console.WriteLine("1");
 
                     // Erstelle eine Skizze
-                    cc.ErstelleSkizze();
+                    cc.ErstelleLeereSkizze();
                     Console.WriteLine("2");
 
                     // Generiere ein Profil
