@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using CATMat;
 using INFITF;
 using MECMOD;
 using PARTITF;
@@ -113,6 +114,46 @@ namespace MinimalCatia
             hsp_catiaPart.Part.Update();
         }
 
+        // Zuweisung des Materials: Das war tricky...
+        public void setMaterial()
+        {
+            // https://ww3.cad.de/foren/ubb/Forum137/HTML/001194.shtml
+
+            // API Docu:
+            // Applying or Retrieving a Material on a Product, a Part, or a Body
+
+            // "C:\Program Files\Dassault Systemes\B28\win_b64\startup\materials\German\Catalog.CATMaterial"
+            // using CATMat; nicht vergessen
+
+            String sFilePath = @"C:\Program Files\Dassault Systemes\B28\win_b64\startup\materials\German\Catalog.CATMaterial";
+            MaterialDocument oMaterial_document = (MaterialDocument)hsp_catiaApp.Documents.Open(sFilePath);
+            MaterialFamilies cFamilies_list = oMaterial_document.Families;
+            
+            foreach (MaterialFamily mf in cFamilies_list)
+            {
+                Console.WriteLine(mf.get_Name());
+            }
+
+            MaterialFamily myMf = cFamilies_list.Item("Metall");
+            foreach (Material mat in myMf.Materials)
+            {
+                Console.WriteLine(mat.get_Name());
+            }
+
+            Material myStahl = myMf.Materials.Item("Stahl");
+
+            MaterialManager partMatManager = hsp_catiaPart.Part.GetItem("CATMatManagerVBExt") as MaterialManager;
+
+            // brauchen Sie Stahl im Part?
+            short linkMode = 0;
+            partMatManager.ApplyMaterialOnPart(hsp_catiaPart.Part, myStahl, linkMode);
+
+            // brauchen Sie Stahl im Body?
+            linkMode = 1;
+            partMatManager.ApplyMaterialOnBody(hsp_catiaPart.Part.MainBody, myStahl, linkMode);
+        }
+
+
         public void ErzeugeBalken(Double l)
         {
             // Hauptkoerper in Bearbeitung definieren
@@ -127,6 +168,34 @@ namespace MinimalCatia
 
             // Part aktualisieren
             hsp_catiaPart.Part.Update();
+        }
+
+        public void Screenshot(string bildname)
+        {
+
+            object[] arr1 = new object[3];
+            hsp_catiaApp.ActiveWindow.ActiveViewer.GetBackgroundColor(arr1);
+            Console.WriteLine("Col: " + arr1[0] + " " + arr1[1] + " " + arr1[2]);
+            
+            object[] arr2 = new object[] { 1, 1, 1 };
+            hsp_catiaApp.ActiveWindow.ActiveViewer.PutBackgroundColor(arr2);
+
+            hsp_catiaApp.StartCommand("CompassDisplayOff");
+            hsp_catiaApp.ActiveWindow.ActiveViewer.Reframe();
+
+            // hsp_catiaApp.ActiveWindow.ActiveViewer.Viewpoint3D = INFITF.Viewpoint3D;
+            //int[] color = new int[3]; // Hintergundfarbe in Weiß setzen
+            //color[0] = 1;
+            //color[1] = 1;
+            //color[2] = 1;
+            // CATSafeArray color[] = new CATSafeArrayVariant[3];
+
+            INFITF.SettingControllers settingControllers1 = hsp_catiaApp.SettingControllers;
+            //INFITF.VisualizationSettingAtt visualizationSettingAtt1 = settingControllers1.Item("CATVizVisualizationSettingCtrl");
+
+            // hsp_catiaApp.ActiveWindow.ActiveViewer.PutBackgroundColor(color);
+
+            hsp_catiaApp.ActiveWindow.ActiveViewer.CaptureToFile(CatCaptureFormat.catCaptureFormatBMP, "C:\\Temp\\" + bildname + ".bmp");
         }
 
 

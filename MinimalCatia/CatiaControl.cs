@@ -36,6 +36,10 @@ namespace MinimalCatia
                     // Extrudiere Balken
                     cc.ErzeugeBalken(300);
                     Console.WriteLine("4");
+
+                    cc.setMaterial();
+
+                    // cc.Screenshot("test");
                 }
                 else
                 {
