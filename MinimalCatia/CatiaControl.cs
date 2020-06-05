@@ -44,7 +44,7 @@ namespace MinimalCatia
 
                     // cc.Screenshot("test");
                     cc.openFile();
-                    // cc.changeUserParameter(2);
+                    cc.changeUserParameter(2);
                     // cc.FEM();
 
                 }

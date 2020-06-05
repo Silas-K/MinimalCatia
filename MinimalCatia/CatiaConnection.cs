@@ -169,6 +169,7 @@ namespace MinimalCatia
             hsp_catiaPart.Part.Update();
         }
 
+        // Zur Erstellung eines Screenshots mit weißem Hintergrund
         public void Screenshot(string bildname)
         {
 
@@ -197,12 +198,43 @@ namespace MinimalCatia
             hsp_catiaApp.ActiveWindow.ActiveViewer.CaptureToFile(CatCaptureFormat.catCaptureFormatBMP, "C:\\Temp\\" + bildname + ".bmp");
         }
 
+        // Öffnen einer bestehenden Datei in Catia
         public void openFile()
         {
             hsp_catiaPart = (PartDocument)hsp_catiaApp.Documents.Open(
                 @"D:\Nextcloud\1_VL\CAD_CAM\07_Material_Vorlage\KaisAufgaben\Ue8\NC-Uebung_2.CATPart");
         }
 
+        public void changeUserParameter(double parameterWert)
+        {
+            // Neuen Parameter erzeugen
+            KnowledgewareTypeLib.Dimension meineLaenge1 = hsp_catiaPart.Part.Parameters.CreateDimension("TestParameter", "LENGTH", 0.000000);
+            meineLaenge1.Rename("CreatedDimension");
+            meineLaenge1.Value = 42;
+
+            // Parameter ändern : Variante 1 - mit foreach Schleife für die Suche
+            // TestLaenge (Parameter in einer Datei) verändern
+            KnowledgewareTypeLib.Parameters paras = hsp_catiaPart.Part.Parameters;
+
+            MessageBox.Show(" " + paras.Count + " "); // Test: haben wir was gefunden? Wieviel?
+
+            foreach (KnowledgewareTypeLib.Parameter para in paras)
+            {
+                if (para.get_Name().Contains("TestLaenge"))
+                {
+                    // Parameter können auch 
+                    KnowledgewareTypeLib.Dimension paraDim = (KnowledgewareTypeLib.Dimension)para;
+                    paraDim.Value = parameterWert;
+
+                    MessageBox.Show("Gefunden: " + para.GetType() + " " + para.get_Name() + Environment.NewLine);
+                }
+            }
+
+            // Parameter ändern : Variante 2 - direkter Zugriff auf die komplexe Datenstruktur
+            KnowledgewareTypeLib.Dimension paraDim2 = paras.GetItem("TestLaenge") as KnowledgewareTypeLib.Dimension;
+            paraDim2.Value = parameterWert+2;
+
+        }
 
 
     }
