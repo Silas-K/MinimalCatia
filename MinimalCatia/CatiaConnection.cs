@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows;
-using CATMat;
 using INFITF;
 using MECMOD;
 using PARTITF;
-
+using CATMat;
+using SAMITF;
 
 namespace MinimalCatia
 {
@@ -202,7 +202,7 @@ namespace MinimalCatia
         public void openFile()
         {
             hsp_catiaPart = (PartDocument)hsp_catiaApp.Documents.Open(
-                @"D:\Nextcloud\1_VL\CAD_CAM\07_Material_Vorlage\KaisAufgaben\Ue8\NC-Uebung_2.CATPart");
+                @"D:\Nextcloud\1_VL\HSP\So20\03_code\FEM\Part1.CATPart");
         }
 
         public void changeUserParameter(double parameterWert)
@@ -234,6 +234,73 @@ namespace MinimalCatia
             KnowledgewareTypeLib.Dimension paraDim2 = paras.GetItem("TestLaenge") as KnowledgewareTypeLib.Dimension;
             paraDim2.Value = parameterWert+2;
 
+        }
+
+        internal void FEM()
+        {
+            // Umgebung aktivieren
+            PartDocument mydoc = (PartDocument)hsp_catiaApp.ActiveDocument;
+
+            // INFITF.SpecsAndGeomWindow specsAndGeomWindow1 = (INFITF.SpecsAndGeomWindow) hsp_catiaApp.ActiveWindow;
+            hsp_catiaApp.StartWorkbench("GPSCfg");
+
+            AnalysisDocument analysisDocument1 = (AnalysisDocument) hsp_catiaApp.ActiveDocument;
+            var analysisManager1 = analysisDocument1.Analysis;
+
+            // Part laden
+            object[] arrayOfVariantOfShort1 = new object[] { 0 };
+            analysisManager1.ImportDefineFile(@"D:\Nextcloud\1_VL\HSP\So20\03_code\FEM\Part1.CATPart", "CATAnalysisImport", arrayOfVariantOfShort1);
+            var analysisModels1 = analysisManager1.AnalysisModels;
+            var analysisModel1 = analysisModels1.Item(1);
+
+            // statische Analyse wählen
+            analysisModel1.RunTransition("CATGPSStressAnalysis_template");
+            var analysisCases1 = analysisModel1.AnalysisCases;
+            var analysisCase1 = analysisCases1.Item(1);
+
+            // verteilte Last aufbringen
+            var analysisSets1 = analysisCase1.AnalysisSets;
+            var analysisSet1 = analysisSets1.Item("Lasten.1", CATAnalysisSetSearchType.catAnalysisSetSearchAll);
+            var analysisEntities1 = analysisSet1.AnalysisEntities;
+            var analysisEntity1 = analysisEntities1.Add("SAMDistributedForce");
+            var analysisLinkedDocuments1 = analysisManager1.LinkedDocuments;
+            var partDocument1 = (PartDocument)analysisLinkedDocuments1.Item(1);
+
+            ProductStructureTypeLib.Product product1 = partDocument1.Product;
+            var part1 = partDocument1.Part;
+            // Die folgede Reference ist abhängig von Ihrem Part - selbst rausfinden per Makrorekorder
+            Reference reference1 = part1.CreateReferenceFromName("Selection_RSur:(Face:(Brp:(Pad.1;0:(Brp:(Sketch.1;3)));None:();Cf11:());Pad.1_ResultOUT;Last;Z0;G8226)");
+
+            analysisEntity1.AddSupportFromProduct(product1, reference1);
+            BasicComponents basicComponents1 = analysisEntity1.BasicComponents;
+            BasicComponent basicComponent1 = (BasicComponent) basicComponents1.GetItem("SAMForceAxis.1");
+            basicComponent1.SetValue("Values", 0, 0, 0, 1);
+
+            BasicComponent basicComponent2 = (BasicComponent) basicComponents1.GetItem("SAMForceVector.1");
+            basicComponent2.SetDimensions(3, 1, 1);
+            basicComponent2.SetValue("Values", 1, 1, 1, 0.000000);
+            basicComponent2.SetValue("Values", 2, 1, 1, 0.000000);
+            basicComponent2.SetValue("Values", 3, 1, 1, 1000.000000);
+
+            // Festlager definieren
+            AnalysisSet analysisSet2 = (AnalysisSet)analysisSets1.Item("Randbedingungen.1", CATAnalysisSetSearchType.catAnalysisSetSearchAll);
+            var analysisEntities2 = analysisSet2.AnalysisEntities;
+            var analysisEntity2 = analysisEntities2.Add("SAMClamp");
+            partDocument1 = (PartDocument)analysisLinkedDocuments1.Item(1);
+            product1 = partDocument1.Product;
+            var reference2 = part1.CreateReferenceFromName("Selection_RSur:(Face:(Brp:(Pad.1;1);None:();Cf11:());Pad.1_ResultOUT;Last;Z0;G8226)");
+            analysisEntity2.AddSupportFromProduct(product1, reference2);
+
+            // Berechnung tarten
+            analysisCase1.Compute();
+
+            var analysisSet3 = analysisSets1.Item("Lösung für statischen Prozess.1", CATAnalysisSetSearchType.catAnalysisSetSearchAll);
+            var analysisImages1 = analysisSet3.AnalysisImages;
+            var analysisImage1 = analysisImages1.Add("StressVonMises_Iso_Smooth", true, false, false);
+
+            INFITF.Window specsAndGeomWindow1 = hsp_catiaApp.ActiveWindow;
+            var viewer3D1 = specsAndGeomWindow1.ActiveViewer;
+            viewer3D1.Reframe();
         }
 
 
