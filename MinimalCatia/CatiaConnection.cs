@@ -153,7 +153,6 @@ namespace MinimalCatia
             partMatManager.ApplyMaterialOnBody(hsp_catiaPart.Part.MainBody, myStahl, linkMode);
         }
 
-
         public void ErzeugeBalken(Double l)
         {
             // Hauptkoerper in Bearbeitung definieren
@@ -196,6 +195,12 @@ namespace MinimalCatia
             // hsp_catiaApp.ActiveWindow.ActiveViewer.PutBackgroundColor(color);
 
             hsp_catiaApp.ActiveWindow.ActiveViewer.CaptureToFile(CatCaptureFormat.catCaptureFormatBMP, "C:\\Temp\\" + bildname + ".bmp");
+        }
+
+        public void openFile()
+        {
+            hsp_catiaPart = (PartDocument)hsp_catiaApp.Documents.Open(
+                @"D:\Nextcloud\1_VL\CAD_CAM\07_Material_Vorlage\KaisAufgaben\Ue8\NC-Uebung_2.CATPart");
         }
 
 

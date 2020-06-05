@@ -19,6 +19,8 @@ namespace MinimalCatia
                 // Finde Catia Prozess
                 if (cc.CATIALaeuft())
                 {
+
+                    /*
                     Console.WriteLine("0");
 
                     // Öffne ein neues Part
@@ -38,8 +40,13 @@ namespace MinimalCatia
                     Console.WriteLine("4");
 
                     cc.setMaterial();
+                    */
 
                     // cc.Screenshot("test");
+                    cc.openFile();
+                    // cc.changeUserParameter(2);
+                    // cc.FEM();
+
                 }
                 else
                 {
