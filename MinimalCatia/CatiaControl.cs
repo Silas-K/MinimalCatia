@@ -30,12 +30,12 @@ namespace MinimalCatia
                     Console.WriteLine("2");
 
                     // Generiere ein Profil
-                    cc.ErzeugeProfil(20, 10);
-                    Console.WriteLine("3");
+                    cc.ErzeugeKontur(20, 10);
+                    Console.WriteLine("ZR 3");
 
                     // Extrudiere Balken
-                    cc.ErzeugeBalken(300);
-                    Console.WriteLine("4");
+                    cc.ErzeugeZahnrad(5);
+                    Console.WriteLine("ZR 4");
                 }
                 else
                 {
