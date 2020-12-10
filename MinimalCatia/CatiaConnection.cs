@@ -5,6 +5,7 @@ using MECMOD;
 using PARTITF;
 using CATMat;
 using SAMITF;
+using KnowledgewareTypeLib;
 
 namespace MinimalCatia
 {
@@ -108,11 +109,45 @@ namespace MinimalCatia
             catLine2D4.StartPoint = catPoint2D4;
             catLine2D4.EndPoint = catPoint2D1;
 
+            //Bemaßungen
+            //Referenzen erzeugen
+            Reference ref_Line1 = (Reference)catLine2D1;
+            Reference ref_Line2 = (Reference)catLine2D2;
+            Reference ref_Line3 = (Reference)catLine2D3;
+            Reference ref_Line4 = (Reference)catLine2D4;
+
+            //Constrainttypen festlegen
+            CatConstraintType cCT_Distance1 = CatConstraintType.catCstTypeDistance;
+            CatConstraintType cCT_Angle1 = CatConstraintType.catCstTypeAngle;
+
+            //Constraints anlegen
+            Constraints myConstraints = hsp_catiaProfil.Constraints;
+
+            //Abstände
+            Constraint constraintBreite1 = myConstraints.AddBiEltCst(cCT_Distance1, ref_Line2, ref_Line4);
+            Constraint constraintHoehe1 = myConstraints.AddBiEltCst(cCT_Distance1, ref_Line1, ref_Line3);
+
+            //Werte für Abstände setzen
+            Dimension length1 = constraintBreite1.Dimension;
+            length1.Value = 100;
+
+            Dimension length2 = constraintHoehe1.Dimension;
+            length2.Value = 100;
+
+            //Eckenwinkel ... beim Rechteck recht langweilig...
+            Constraint constraintWinkel1 = myConstraints.AddBiEltCst(cCT_Angle1, ref_Line1, ref_Line2);
+            constraintWinkel1.AngleSector = (CatConstraintAngleSector)1;
+
+            //Wert für Winkel ändern
+            Dimension angle1 = constraintWinkel1.Dimension;
+            angle1.Value = 90;
+
             // Skizzierer verlassen
             hsp_catiaProfil.CloseEdition();
             // Part aktualisieren
             hsp_catiaPart.Part.Update();
         }
+
 
         // Zuweisung des Materials: Das war tricky...
         public void setMaterial()
