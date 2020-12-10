@@ -109,7 +109,7 @@ namespace MinimalCatia
             catLine2D4.StartPoint = catPoint2D4;
             catLine2D4.EndPoint = catPoint2D1;
 
-            //Bemaßungen
+            #region  Bemaßungen
             //Referenzen erzeugen
             Reference ref_Line1 = (Reference)catLine2D1;
             Reference ref_Line2 = (Reference)catLine2D2;
@@ -141,6 +141,7 @@ namespace MinimalCatia
             //Wert für Winkel ändern
             Dimension angle1 = constraintWinkel1.Dimension;
             angle1.Value = 90;
+            #endregion
 
             // Skizzierer verlassen
             hsp_catiaProfil.CloseEdition();
