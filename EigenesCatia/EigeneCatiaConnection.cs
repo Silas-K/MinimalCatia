@@ -136,14 +136,20 @@ namespace EigenesCatia
             catiaPart.Part.InWorkObject = catiaPart.Part.MainBody;
             ShapeFactory shapeFac = (ShapeFactory)catiaPart.Part.ShapeFactory;
 
+
+            //BLOCK
             Pad newPad = shapeFac.AddNewPad(catiaProfil, l);
-            newPad.set_Name("Balken (Hallo)");
+            newPad.set_Name("Block");
 
 
 
             catiaPart.Part.Update();
 
-            //Pad pad1 = newPad;
+
+
+
+            //FASE
+
             Reference reference1 = catiaPart.Part.CreateReferenceFromName("");
 
             Chamfer chamfer = shapeFac.AddNewChamfer(
